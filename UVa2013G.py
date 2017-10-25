@@ -7,12 +7,9 @@ battery = d
 steps = 0
 #             right  down   left    up
 directions = [(0,1), (1,0), (0,-1), (-1,0)]
-d = 0
 
 # find 'r' to set x (column from left) and y (row from top)
-for i, row in enumerate(room):
-    if 'r' in row:
-        y = i
+y = next(i for i,row in enumerate(room) if 'r' in row)
 x = room[y].index('r')
 #print y, x
 
@@ -23,22 +20,21 @@ room[y] = ''.join(row)
 #for row in room: print row
 
 while battery > 0 and steps <= 100000:
-    target = room[y+directions[d][0]][x+directions[d][1]]
+    target = room[y+directions[0][0]][x+directions[0][1]]
     #print y, x, d, target, steps, battery
     if target == 'm':
         print steps+1
         break
     elif target == 'x':
-        d += 1
-        d %= 4
+        directions.append(directions.pop(0))
         steps += 1
         battery -= 1
     elif target == '-':
-        y += directions[d][0]
-        x += directions[d][1]
+        y += directions[0][0]
+        x += directions[0][1]
         steps += 1
         battery -= 1
-    if 'p' in [ room[y][x+1], room[y+1][x], room[y][x-1], room[y-1][x] ]:
+    if battery <= maxBattery/2 and 'p' in [ room[y][x+1], room[y+1][x], room[y][x-1], room[y-1][x] ]:
         steps += (maxBattery - battery)
         battery = maxBattery
 else:
